@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fotossntese</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(135deg, #a1ff09, #00ff80);
+      padding: 20px;
+      text-align: center;
+      color: #fff;
+      min-height: 100vh;
+    }
+    .container {
+      background: linear-gradient(135deg, #00ffaa, #9dff00);
+      border: 2px solid #ffffff;
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 450px;
+      margin: auto;
+    }
+    h2 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+    }
+    input, button {
+      padding: 15px;
+      font-size: 1rem;
+      margin: 10px 0;
+      width: 100%;
+      max-width: 400px;
+      border-radius: 25px;
+      border: none;
+      outline: none;
+      transition: all 0.3s ease;
+    }
+    input {
+      background-color: rgba(255, 255, 255, 0.8);
+      color: #333;
+    }
+    button {
+      background-color: #1a9c00;
+      color: white;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    button:hover {
+      background-color: #5adf0e;
+      transform: translateY(-3px);
+    }
+    button:active {
+      transform: translateY(2px);
+    }
+    #modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.6);
+      padding-top: 100px;
+    }
+    #modal-content {
+      background-color: #fff;
+      margin: auto;
+      padding: 30px;
+      border-radius: 10px;
+      width: 80%;
+      max-width: 450px;
+      text-align: center;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+      animation: fadeIn 1s ease;
+    }
+    #modal-content p {
+      font-size: 1.5rem;
+      color: #333;
+    }
+    #close {
+      position: absolute;
+      top: 1%;
+      right: 1%;
+      font-size: 2rem;
+      color: #888;
+      cursor: pointer;
+    }
+    #close:hover {
+      color: #000;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-50px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    input:focus, button:focus {
+      box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
+      outline: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Fotossíntese 🎄</h2>
+    <input type="text" id="numero" placeholder="Digite o número da pergunta" />
+    <button onclick="mostrarPergunta()">Mostrar pergunta</button>
+    <div id="pergunta-container" style="margin-top: 20px;"></div>
+    <div id="alternativas-container" style="margin-top: 10px;"></div>
+  </div>
+  <h4>Participantes: Hanielly, Laureny, Carlos, Gabriel N., Emerson</h4>
+  <div id="modal">
+    <div id="modal-content">
+      <span id="close">&times;</span>
+      <p id="modal-resposta"></p>
+      <p id="contador"></p>
+    </div>
+  </div>
+  <script>
+    const perguntas = {
+      "1": "Qual é o principal produto da fotossíntese?",
+      "2": "Qual gás é consumido na fotossíntese?",
+      "3": "Qual gás é liberado na fotossíntese?",
+      "4": "A fotossíntese ocorre principalmente em qual parte da planta?",
+      "5": "Qual é a principal fonte de energia para a fotossíntese?",
+      "6": "Qual é o pigmento essencial para a fotossíntese?",
+      "7": "A fotossíntese acontece durante o dia ou à noite?",
+      "8": "Qual substância as plantas retiram do solo para a fotossíntese?",
+      "9": "A fotossíntese é um processo que:",
+      "10": "A fotossíntese ajuda a reduzir qual gás do efeito estufa?",
+      "11": "Qual é a equação geral da fotossíntese?",
+      "12": "Sem a fotossíntese, o que aconteceria com os níveis de oxigênio?",
+      "13": "As algas também fazem fotossíntese?",
+      "14": "Qual das opções é um exemplo de organismo fotossintético?",
+      "15": "A fotossíntese é importante para a cadeia alimentar porque:",
+      "16": "A fotossíntese ocorre nos cloroplastos?",
+      "17": "A fotossíntese é um processo anabólico ou catabólico?",
+      "18": "Durante a fotossíntese, a planta:",
+      "19": "Qual é o papel da luz solar na fotossíntese?",
+      "20": "O oxigênio liberado vem da quebra de qual substância?"
+    };
+
+    const alternativas = {
+      "1": { "a": "Gás carbônico", "b": "Glicose" },
+      "2": { "a": "Oxigênio", "b": "Dióxido de carbono" },
+      "3": { "a": "Oxigênio", "b": "Nitrogênio" },
+      "4": { "a": "Raiz", "b": "Folha" },
+      "5": { "a": "Luz solar", "b": "Água" },
+      "6": { "a": "Clorofila", "b": "Hemoglobina" },
+      "7": { "a": "Noite", "b": "Dia" },
+      "8": { "a": "Oxigênio", "b": "Água" },
+      "9": { "a": "Gasta energia", "b": "Produz energia química" },
+      "10": { "a": "Oxigênio", "b": "Gás carbônico" },
+      "11": { "a": "CO2 + H2O → O2 + C6H12O6", "b": "O2 + C6H12O6 → CO2 + H2O" },
+      "12": { "a": "Aumentariam", "b": "Diminuiriam" },
+      "13": { "a": "Sim", "b": "Não" },
+      "14": { "a": "Fungo", "b": "Cianobactéria" },
+      "15": { "a": "Produz água", "b": "Produz alimento" },
+      "16": { "a": "Sim", "b": "Não" },
+      "17": { "a": "Catabólico", "b": "Anabólico" },
+      "18": { "a": "Consome oxigênio", "b": "Libera oxigênio" },
+      "19": { "a": "Fornecer energia", "b": "Fornecer calor" },
+      "20": { "a": "Glicose", "b": "Água" }
+    };
+
+    const respostas = {
+      "1": "b", "2": "b", "3": "a", "4": "b", "5": "a",
+      "6": "a", "7": "b", "8": "b", "9": "b", "10": "b",
+      "11": "a", "12": "b", "13": "a", "14": "b", "15": "b",
+      "16": "a", "17": "b", "18": "b", "19": "a", "20": "b"
+    };
+
+    function mostrarPergunta() {
+      const num = document.getElementById("numero").value.trim();
+      if (!perguntas[num]) {
+        alert("Pergunta não encontrada.");
+        return;
+      }
+      document.getElementById("pergunta-container").innerText = perguntas[num];
+      const alt = alternativas[num];
+      const container = document.getElementById("alternativas-container");
+      container.innerHTML = "";
+      for (const letra in alt) {
+        const btn = document.createElement("button");
+        btn.textContent = `${letra.toUpperCase()}: ${alt[letra]}`;
+        btn.style.margin = "5px";
+        btn.onclick = () => verificarResposta(num, letra);
+        container.appendChild(btn);
+      }
+    }
+
+    function verificarResposta(num, escolha) {
+      const correta = respostas[num];
+      if (escolha === correta) {
+        mostrarModal("✅ Resposta correta!");
+      } else {
+        mostrarModal(`❌ Resposta errada! A resposta certa é: ${correta.toUpperCase()}`);
+      }
+    }
+
+    function mostrarModal(texto) {
+      const modal = document.getElementById("modal");
+      const modalResposta = document.getElementById("modal-resposta");
+      const contador = document.getElementById("contador");
+
+      modalResposta.innerText = texto;
+      modal.style.display = "block";
+
+      let tempo = 5;
+      contador.innerText = `⏳ Recarregando em ${tempo} segundos...`;
+
+      const intervalo = setInterval(() => {
+        tempo--;
+        contador.innerText = `⏳ Recarregando em ${tempo} segundos...`;
+        if (tempo <= 0) {
+          clearInterval(intervalo);
+          location.reload();
+        }
+      }, 1000);
+    }
+
+    document.getElementById("close").onclick = function () {
+      document.getElementById("modal").style.display = "none";
+    };
+  </script>
+</body>
+</html>
